@@ -11,7 +11,7 @@ on:
 jobs:
 
   # ==========================================
-  # Job 1: Run Python tests
+  # Job 1: Code Quality, Dependency Scan & Tests
   # ==========================================
 
   test:
@@ -34,16 +34,26 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r app/requirements.txt
-          pip install pytest
+
+      # Scan Python dependencies for known vulnerabilities
+      - name: Run dependency security scan
+        run: |
+          pip install pip-audit
+          pip-audit -r app/requirements.txt
+
+      # Run code quality checks
+      - name: Run code quality checks
+        run: |
+          flake8 app
 
       # Run unit tests
-      - name: Run tests
+      - name: Run unit tests
         run: |
           pytest
 
 
   # ==========================================
-  # Job 2: Build and push Docker image
+  # Job 2: Build and Push Docker Image
   # ==========================================
 
   docker:

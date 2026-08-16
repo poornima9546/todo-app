@@ -14,7 +14,8 @@ COPY app/requirements.txt .
 RUN python -m venv /opt/venv
 
 # Install Python dependencies into the virtual environment
-RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+RUN /opt/venv/bin/pip install --no-cache-dir --upgrade "pip==25.3" && \
+    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 
 # ==============================
@@ -22,6 +23,12 @@ RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 # ==============================
 
 FROM python:3.12-slim
+
+# Update Debian security packages
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
